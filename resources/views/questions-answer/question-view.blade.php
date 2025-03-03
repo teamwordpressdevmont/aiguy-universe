@@ -47,72 +47,33 @@
                             <th scope="col" class="px-6 py-3 text-start text-sm text-default-500">ID</th>
                             <th scope="col" class="px-6 py-3 text-start text-sm text-default-500">User Name</th>
                             <th scope="col" class="px-6 py-3 text-start text-sm text-default-500">Tool Name</th>
+                            <th scope="col" class="px-6 py-3 text-start text-sm text-default-500">Replay On</th>
                             <th scope="col" class="px-6 py-3 text-start text-sm text-default-500">Question Answer</th>
+                            <th scope="col" class="px-6 py-3 text-start text-sm text-default-500">Like</th>
+                            <th scope="col" class="px-6 py-3 text-start text-sm text-default-500">Dislike</th>
                             <th scope="col" class="px-6 py-3 text-start text-sm text-default-500">Action</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-200">
                         @if(!$question)
-                        <tr class="bg-white border-b border-gray-200">
-                            <th scope="row" class="px-2 py-2 font-medium text-gray-900 whitespace-nowrap" colspan="6">
-                                No data available.
-                            </th>
-                        </tr>
+                            <tr class="bg-white border-b border-gray-200">
+                                <td class="px-2 py-2 font-medium text-gray-900 whitespace-nowrap text-center" colspan="6">
+                                    No data available.
+                                </td>
+                            </tr>
                         @else
-                            @if($question->answer->isNotEmpty())
-                                @foreach($question->answer as $index => $answer)
+                            @php $sno = 1; @endphp
+
+                            @foreach($question->answer as $answer)
                                 <tr class="bg-white border-b border-gray-200">
-                                    @if($index == 0)
-                                        <th scope="row" class="px-6 py-3 font-medium text-gray-900 whitespace-nowrap text-start" rowspan="{{ count($question->answer) }}">
-                                            1
-                                        </th>
-                                        <th scope="row" class="px-6 py-3 font-medium text-gray-900 whitespace-nowrap text-start" rowspan="{{ count($question->answer) }}">
-                                            {{ $question->id }}
-                                        </th>
-                                        <td class="px-6 py-3 font-medium text-gray-900 whitespace-nowrap" rowspan="{{ count($question->answer) }}">
-                                            {{ $question->user->full_name }}
-                                        </td>
-                                        <td class="px-6 py-3 font-medium text-gray-900 whitespace-nowrap" rowspan="{{ count($question->answer) }}">
-                                            {{ $question->tool->name }}
-                                        </td>
-                                    @endif
-                                    <td class="px-6 py-3 font-medium text-gray-900 whitespace-nowrap">
-                                        {{ $answer->comment }}
-                                    </td>
-                                    @if($index == 0)
-                                        <td class="px-6 py-3 font-medium text-gray-900 whitespace-nowrap" rowspan="{{ count($question->answer) }}">
-                                            <div class="flex gap-4">
-                                                <form action="{{ route('question-answer.updateStatus', $question->id) }}" method="POST">
-                                                    @csrf
-                                                    @method('PUT')
-                                                    <button type="submit" name="approved" value="{{ $question->approved == 1 ? 0 : 1 }}" 
-                                                        class="px-3 py-1 rounded text-white 
-                                                        {{ $question->approved == 1 ? 'bg-red-600 hover:bg-red-700' : 'bg-green-600 hover:bg-green-700' }}">
-                                                        {{ $question->approved == 1 ? 'Disapprove' : 'Approve' }}
-                                                    </button>
-                                                </form>
-                                            </div>
-                                        </td>
-                                    @endif
-                                </tr>
-                                @endforeach
-                            @else
-                                <tr class="bg-white border-b border-gray-200">
-                                    <th scope="row" class="px-6 py-3 font-medium text-gray-900 whitespace-nowrap text-start">
-                                        1
-                                    </th>
-                                    <th scope="row" class="px-6 py-3 font-medium text-gray-900 whitespace-nowrap text-start">
-                                        {{ $question->id }}
-                                    </th>
-                                    <td class="px-6 py-3 font-medium text-gray-900 whitespace-nowrap">
-                                        {{ $question->user->full_name }}
-                                    </td>
-                                    <td class="px-6 py-3 font-medium text-gray-900 whitespace-nowrap">
-                                        {{ $question->tool->name }}
-                                    </td>
-                                    <td class="px-6 py-3 font-medium text-gray-900 whitespace-nowrap">
-                                        No answer available.
-                                    </td>
+                                    <td class="px-6 py-3 font-medium text-gray-900 whitespace-nowrap text-start">{{ $sno }}</td>
+                                    <td class="px-6 py-3 font-medium text-gray-900 whitespace-nowrap text-start">{{ $question->id }}</td>
+                                    <td class="px-6 py-3 font-medium text-gray-900 whitespace-nowrap">{{ $question->user->full_name }}</td>
+                                    <td class="px-6 py-3 font-medium text-gray-900 whitespace-nowrap">{{ $question->tool->name }}</td>
+                                    <td class="px-6 py-3 font-medium text-gray-900 whitespace-nowrap">{{ $answer->community_answer ?? 'No reply' }}</td>
+                                    <td class="px-6 py-3 font-medium text-gray-900 whitespace-nowrap">{{ $answer->comment }}</td>
+                                    <td class="px-6 py-3 font-medium text-gray-900 whitespace-nowrap">{{ $answer->like_count }}</td>
+                                    <td class="px-6 py-3 font-medium text-gray-900 whitespace-nowrap">{{ $answer->dislike_count }}</td>
                                     <td class="px-6 py-3 font-medium text-gray-900 whitespace-nowrap">
                                         <div class="flex gap-4">
                                             <form action="{{ route('question-answer.updateStatus', $question->id) }}" method="POST">
@@ -125,9 +86,10 @@
                                                 </button>
                                             </form>
                                         </div>
-                                    </td>  
+                                    </td>
                                 </tr>
-                            @endif
+                                @php $sno++; @endphp
+                            @endforeach
                         @endif
                     </tbody>
                 </table>
