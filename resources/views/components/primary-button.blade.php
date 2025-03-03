@@ -1,0 +1,3 @@
+<button {{ $attributes->merge(['type' => 'submit', 'class' => 'box-border border border-[#002715] border-gradient-button rounded-2xl w-full py-3 text-white cursor-pointer font-[THICCCBOI-Regular] text-sm relative overflow-hidden  before:content-[\'\'] before:absolute before:-top-[50px] before:-left-[111px] before:w-[270px] before:h-[100px] before:bg-[radial-gradient(circle,rgba(32,191,14,0.15)_0%,rgba(0,0,0,0)_35%)]']) }}>
+    {{ $slot }}
+</button>

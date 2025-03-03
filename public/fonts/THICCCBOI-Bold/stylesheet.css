@@ -1,0 +1,12 @@
+@font-face {
+    font-family: 'THICCCBOI-bold';
+    src: url('THICCCBOI-Bold.eot');
+    src: url('THICCCBOI-Bold.eot?#iefix') format('embedded-opentype'),
+        url('THICCCBOI-Bold.woff2') format('woff2'),
+        url('THICCCBOI-Bold.woff') format('woff'),
+        url('THICCCBOI-Bold.ttf') format('truetype'),
+        url('THICCCBOI-Bold.svg#THICCCBOI-Bold') format('svg');
+    font-weight: bold;
+    font-style: normal;
+    font-display: swap;
+}

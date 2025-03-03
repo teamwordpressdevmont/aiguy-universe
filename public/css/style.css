@@ -1,0 +1,284 @@
+/* 
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@import "tailwindcss";
+
+@theme {
+    --color-*: initial;
+    --color-purple: #3f3cbb;
+} */
+
+@font-face {
+    font-family: 'THICCCBOI-bold';
+    src: url('../fonts/THICCCBOI-Bold/THICCCBOI-Bold.eot');
+    src: url('../fonts/THICCCBOI-Bold/THICCCBOI-Bold.eot?#iefix') format('embedded-opentype'),
+        url('../fonts/THICCCBOI-Bold/THICCCBOI-Bold.woff2') format('woff2'),
+        url('../fonts/THICCCBOI-Bold/THICCCBOI-Bold.woff') format('woff'),
+        url('../fonts/THICCCBOI-Bold/THICCCBOI-Bold.ttf') format('truetype'),
+        url('../fonts/THICCCBOI-Bold/THICCCBOI-Bold.svg#THICCCBOI-Bold') format('svg');
+    font-weight: bold;
+    font-style: normal;
+    font-display: swap;
+}
+
+
+@font-face {
+    font-family: 'THICCCBOI-Regular';
+    src: url('../fonts/THICCCBOI-Regular/THICCCBOI-Regular.eot');
+    src: url('../fonts/THICCCBOI-Regular/THICCCBOI-Regular.eot?#iefix') format('embedded-opentype'),
+        url('../fonts/THICCCBOI-Regular/THICCCBOI-Regular.woff2') format('woff2'),
+        url('../fonts/THICCCBOI-Regular/THICCCBOI-Regular.woff') format('woff'),
+        url('../fonts/THICCCBOI-Regular/THICCCBOI-Regular.ttf') format('truetype'),
+        url('../fonts/THICCCBOI-Regular/THICCCBOI-Regular.svg#THICCCBOI-Regular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+
+body{
+    font-family: 'THICCCBOI-Regular';
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+
+}
+
+label
+{
+    font-family: 'THICCCBOI-bold';
+}
+
+
+
+.border-gradient{
+    background: radial-gradient(circle at 100% 100%, #010E0D 0, #010E0D 13px, transparent 13px) 0% 0%/15px 15px no-repeat,
+    radial-gradient(circle at 0 100%, #010E0D 0, #010E0D 13px, transparent 13px) 100% 0%/15px 15px no-repeat,
+    radial-gradient(circle at 100% 0, #010E0D 0, #010E0D 13px, transparent 13px) 0% 100%/15px 15px no-repeat,
+    radial-gradient(circle at 0 0, #010E0D 0, #010E0D 13px, transparent 13px) 100% 100%/15px 15px no-repeat,
+    linear-gradient(#010E0D, #010E0D) 50% 50%/calc(100% - 4px) calc(100% - 30px) no-repeat,
+    linear-gradient(#010E0D, #010E0D) 50% 50%/calc(100% - 30px) calc(100% - 4px) no-repeat,
+    linear-gradient(301deg, transparent 70%, rgba(32,191,14,1) 100%);
+}
+
+.border-gradient-button:hover{
+    opacity: 0.7; /* Reduce opacity instead of transitioning background */
+}
+.border-gradient-button::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle,rgba(32,191,14,0.15) 100%,rgba(0,0,0,0) 100%);
+    opacity: 1;
+    transition: opacity 0.5s ease-in-out;
+    z-index: -1;
+}
+.border-gradient-button{
+    background: radial-gradient(circle at 100% 100%, #010E0D 0, #010E0D 13px, transparent 13px) 0% 0%/15px 15px no-repeat,
+    radial-gradient(circle at 0 100%, #010E0D 0, #010E0D 13px, transparent 13px) 100% 0%/15px 15px no-repeat,
+    radial-gradient(circle at 100% 0, #010E0D 0, #010E0D 13px, transparent 13px) 0% 100%/15px 15px no-repeat,
+    radial-gradient(circle at 0 0, #010E0D 0, #010E0D 13px, transparent 13px) 100% 100%/15px 15px no-repeat,
+    linear-gradient(#010E0D, #010E0D) 50% 50%/calc(100% - 4px) calc(100% - 30px) no-repeat,
+    linear-gradient(#010E0D, #010E0D) 50% 50%/calc(100% - 30px) calc(100% - 4px) no-repeat,
+    linear-gradient(301deg, transparent 85%, rgba(32,191,14,1) 100%);
+    /* transition: .5s ease-in-out; */
+}
+
+#closeIcon{
+    left: 10%;
+    position: absolute;
+    top: 0;
+    width: 25px;
+    height: 25px;
+    display: flex;
+    align-items: center;
+}
+div#imagePreviewContainer{
+    position: relative;
+}
+
+.bg_dark {
+    background-color: #01040A;
+}
+
+.bg_light_dark {
+    background-color: #021F11;
+}
+
+.bg_light {
+    background-color: #20BF0E;
+}
+
+.border-light {
+    border: 2px solid #20BF0E;
+}
+.flex.items-center.gap-4:first-child a.add_sub_cons_btn, .flex.items-center.gap-4:first-child a.add_sub_btn {
+    margin-top: 0 !important;
+}
+a.add_sub_cons_btn, a.add_sub_btn {
+    margin-top: 5px !important;
+    display: block;
+}
+
+
+/* input:-webkit-autofill {
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: #ffffff;
+    transition: background-color 5000sease-in-out 0s;
+    box-shadow: inset 0 0 20px 20px #23232329;
+} */
+/* Autofill styles for Firefox */
+/* input:-moz-autofill{
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: #ffffff;
+    transition: background-color 5000sease-in-out 0s;
+    box-shadow: inset 0 0 20px 20px #23232329;
+} */
+
+#remember_me {
+    appearance: none;
+    width: 25px;
+    height: 25px;
+    border-radius: 4px;
+    background: radial-gradient(circle at 100% 100%, #010E0D 0, #010E0D 13px, transparent 13px) 0% 0%/15px 15px no-repeat,
+    radial-gradient(circle at 0 100%, #010E0D 0, #010E0D 13px, transparent 13px) 100% 0%/15px 15px no-repeat,
+    radial-gradient(circle at 100% 0, #010E0D 0, #010E0D 13px, transparent 13px) 0% 100%/15px 15px no-repeat,
+    radial-gradient(circle at 0 0, #010E0D 0, #010E0D 13px, transparent 13px) 100% 100%/15px 15px no-repeat,
+    linear-gradient(#010E0D, #010E0D) 50% 50%/calc(100% - 4px) calc(100% - 30px) no-repeat,
+    linear-gradient(#010E0D, #010E0D) 50% 50%/calc(100% - 30px) calc(100% - 4px) no-repeat,
+    linear-gradient(301deg, transparent 77%, rgba(32, 191, 14, 1) 100%);
+    border: 1px solid #002715;
+    display: inline-block;
+    position: relative;
+    cursor: pointer;
+}
+
+/* Checkbox checked state */
+input[type="checkbox"]:checked {
+    /* background: radial-gradient(circle at 100% 100%, #20bf0e 0, #20bf0e 13px, transparent 13px) 0% 0%/15px 15px no-repeat,
+        radial-gradient(circle at 0 100%, #20bf0e 0, #20bf0e 13px, transparent 13px) 100% 0%/15px 15px no-repeat,
+        radial-gradient(circle at 100% 0, #20bf0e 0, #20bf0e 13px, transparent 13px) 0% 100%/15px 15px no-repeat,
+        radial-gradient(circle at 0 0, #20bf0e 0, #20bf0e 13px, transparent 13px) 100% 100%/15px 15px no-repeat,
+        linear-gradient(#20bf0e, #20bf0e) 50% 50%/calc(100% - 4px) calc(100% - 30px) no-repeat,
+        linear-gradient(#20bf0e, #20bf0e) 50% 50%/calc(100% - 30px) calc(100% - 4px) no-repeat;
+    border-color: #20bf0e; */
+}
+
+/* Checkbox tick (pseudo-element) */
+#remember_me::before {
+    content: "✔";
+    font-size: 16px;
+    color: white;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out;
+}
+
+#remember_me:checked::before {
+    opacity: 1;
+}
+
+.loader img{
+    margin: 30px auto;
+    width: 100px;
+    height: 100px;
+}
+
+.pagination-container nav .hidden
+{
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+}
+
+.pagination-container nav 
+{
+    margin-left: auto;
+}
+
+.site_number_per_item select
+{
+    width: 80px;
+}
+
+.searchCloseIcon
+{
+    right: 85px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.loader {
+    margin: 50px auto !important;
+    width: 100px !important;
+    height: 100px !important;  
+}
+
+
+.simplebar-content
+{
+    height: 100%;
+    display: flex;
+    flex-flow: column;
+}
+
+[type='file']:focus
+{
+    outline: none;
+}
+.blogLeftImage {
+    height: 390px;
+    object-fit: cover;
+    object-position: top;
+}
+.blogSubImage {
+    height: 380px;
+}
+
+@media(min-width:1024px)
+{
+    .simplebar-content
+    {
+        padding-bottom: 0px !important;
+    }
+}
+
+.site_user_dropdown
+{
+    margin-top: auto;
+    background-color: #e9e9ea;
+    padding: 5px 15px;
+    border-radius: 5px;
+}
+
+option:disabled {
+    background: transparent;
+}
+
+@media(max-width:640px)
+{
+    .pagination-container
+    {
+        flex-flow: column;
+    }
+
+    .site_number_per_item
+    {
+        justify-content: space-between;
+        margin-bottom: 10px;
+    }
+
+    .pagination-container nav {
+        margin-left: 0;
+    }
+}
