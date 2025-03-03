@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class CommunityAnswers extends Model
 {
@@ -33,5 +35,21 @@ class CommunityAnswers extends Model
     
     public function childAnswers() {
         return $this->hasMany(CommunityAnswers::class, 'parent_answer_id', 'id')->where('approved', 1)->with( 'childAnswers' );
+    }
+
+    /**
+     * Relationship with User
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'user_id', 'id');
+    }
+
+    /**
+     * Relationship with AI Tool Category
+     */
+    public function aiToolCategory(): BelongsTo
+    {
+        return $this->belongsTo(AiToolsCategory::class, 'category_id', 'id');
     }
 }

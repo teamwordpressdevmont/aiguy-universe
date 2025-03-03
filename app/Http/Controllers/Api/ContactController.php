@@ -30,9 +30,9 @@ class ContactController extends Controller
 
             // Validate request
             $validatedData = $request->validate([
-                'name' => 'required|string',
-                'email' => 'email|required',
-                'message' => 'required|string',
+                'name' => 'required|string|regex:/^[a-zA-Z\s]+$/',
+                'email' => 'required|email',
+                'message' => 'required|string|regex:/^[a-zA-Z\s]+$/',
             ]);
 
             Contact::create($validatedData);

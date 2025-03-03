@@ -95,14 +95,16 @@ Route::middleware('auth:api')->group(function () {
         //Comment API's
         Route::group( ['prefix' => 'comment'], function() {
             Route::get( '/', [CommentController::class, 'fetchQuestionAnswers'] )->name( 'comment.get' );
-            Route::post( '/add', [CommentController::class, 'addQuestionAnswers'] )->name('comment.add');
+            Route::post( '/add-question', [CommentController::class, 'addQuestion'] )->name('comment.question.add');
+            Route::post( '/add-answer', [CommentController::class, 'addAnswers'] )->name('comment.answers.add');
             Route::post( '/like-dislike', [ CommentController::class, 'addLikeDislikeOnAnswers' ] )->name( 'comment.add.like.dislike' );
         } );
 
         //Community API's
         Route::group( ['prefix' => 'community'], function() {
             Route::get( '/', [CommunityController::class, 'fetchQuestionAnswers'] )->name( 'community.get' );
-            Route::post( '/add', [CommunityController::class, 'addQuestionAnswersCommunity'] )->name('community.add');
+            Route::post( '/add-question', [CommunityController::class, 'addQuestionCommunity'] )->name('community.question.add');
+            Route::post( '/add-answer', [CommunityController::class, 'addAnswersCommunity'] )->name('community.answer.add');
             Route::post( '/like-dislike', [ CommunityController::class, 'addLikeDislikeOnAnswers' ] )->name( 'community.add.like.dislike' );
         } );
 

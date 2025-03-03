@@ -36,11 +36,9 @@
                     <strong>User Name:</strong>  {{$folder->user->full_name}}
                 </h4>
                     @if($aiTools->isNotEmpty())
-                        <ul>
-                            @foreach($aiTools as $tool)
-                            <h4 class="text-lg font-bold text-default-800 mb-2"><strong>Total Tools:</strong> {{ $tool->id }}</h4>
-                            @endforeach
-                        </ul>
+                        <h4 class="text-lg font-bold text-default-800 mb-2">
+                            <strong>Total Tools:</strong> {{ $aiTools->count() }}
+                        </h4>
                     @else
                         <p>No AI Tools found.</p>
                     @endif
@@ -48,9 +46,12 @@
                     <h3 class="text-lg font-bold text-default-800 mb-2">
                         <strong>Access Type:</strong> {{$folder->access_type}}
                     </h3>
-                <p class="text-xs text-default-500 mb-2">
-                    <a href="{{ $folder->shareable_link }}" target="_blank"><span class="material-symbols-rounded text-xl">share</span></a> 
-                </p>
+                    
+                    @if ($folder->access_type !== 'private')
+                        <p class="text-xs text-default-500 mb-2">
+                            <a href="{{ $folder->shareable_link }}" target="_blank"><span class="material-symbols-rounded text-xl">share</span></a> 
+                        </p>
+                    @endif
 
             </div>
         </div>

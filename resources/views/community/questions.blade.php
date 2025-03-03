@@ -25,11 +25,11 @@
 
 
         <div class="flex justify-between items-center mb-6">
-            <h1 class="text-3xl font-bold tracking-tight text-gray-900">Answer List</h1>
+            <h1 class="text-3xl font-bold tracking-tight text-gray-900">Community Question</h1>
         </div>
         <div class="relative overflow-x-auto">
             <div class="grid lg:grid-cols-3 gap-6">
-            <form id="searchForm" method="GET" action="{{ route('question-answer.answer-list') }}" class="relative w-full max-w-96 mb-5 flex">
+            <form id="searchForm" method="GET" action="{{ route('community.questions') }}" class="relative w-full max-w-96 mb-5 flex">
                 <input type="text" name="search" value="{{ request('search') }}" id="table-search" class="form-input rounded-e-none" placeholder="Search for items">
                 <button  type="submit" class="flex items-center justify-center border border-default-200 bg-default-100 px-3 font-semibold rounded-r-md border-s-0">Search</button>
                 <div class="searchCloseIcon input-group-append absolute">
@@ -46,54 +46,50 @@
                             <th scope="col" class="px-6 py-3 text-start text-sm text-default-500">S.No</th>
                             <th scope="col" class="px-6 py-3 text-start text-sm text-default-500">ID</th>
                             <th scope="col" class="px-6 py-3 text-start text-sm text-default-500">User Name</th>
-                            <th scope="col" class="px-6 py-3 text-start text-sm text-default-500">Tool Name</th>
-                            <th scope="col" class="px-6 py-3 text-start text-sm text-default-500">Question Title</th>
+                            <th scope="col" class="px-6 py-3 text-start text-sm text-default-500">Category Name</th>
                             <th scope="col" class="px-6 py-3 text-start text-sm text-default-500">
-                                <a href="{{ route('question-answer.answer-list', array_merge(request()->all(), ['sort_by' => 'comment', 'sort_direction' => request('sort_direction') == 'asc' ? 'desc' : 'asc'])) }}">
-                                    Answer
+                                <a href="{{ route('community.questions', array_merge(request()->all(), ['sort_by' => 'question_title', 'sort_direction' => request('sort_direction') == 'asc' ? 'desc' : 'asc'])) }}">
+                                    Question Title
                                 </a>
                             </th>
-                            <th scope="col" class="px-6 py-3 text-start text-sm text-default-500">Replay On</th>
-                            <th scope="col" class="px-6 py-3 text-start text-sm text-default-500">Like</th>
-                            <th scope="col" class="px-6 py-3 text-start text-sm text-default-500">Dislike</th>
-
+                            <th scope="col" class="px-6 py-3 text-start text-sm text-default-500">Question Brief</th>
                             <th scope="col" class="px-6 py-3 text-start text-sm text-default-500" width="130">Action</th>                       
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-200">     
-                    @if($CommentAnswer->isEmpty())
+                    @if($communityQuestions->isEmpty())
                     <tr class="bg-white border-b   border-gray-200">
                         <th scope="row" class="px-2 py-2 font-medium text-gray-900 whitespace-nowrap" colspan="8">
                             No data available.
                         </th>
                     </tr>
                     @else      
-                    @foreach($CommentAnswer as $index => $CommentAnswers)
+                    @foreach($communityQuestions as $index => $communityQuestion)
                         <tr class="bg-white border-b border-gray-200">
                              <th scope="row" class="px-6 py-3 font-medium text-gray-900 whitespace-nowrap text-start">
-                                {{ ($CommentAnswer->currentPage() - 1) * $CommentAnswer->perPage() + $index + 1 }}
+                                {{ ($communityQuestions->currentPage() - 1) * $communityQuestions->perPage() + $index + 1 }}
                             </th>
                             <th scope="row" class="px-6 py-3 font-medium text-gray-900 whitespace-nowrap text-start">
-                                {{ $CommentAnswers->id }}
+                                {{ $communityQuestion->id }}
                             </th>
-                            <td class="px-6 py-3 font-medium text-gray-900 whitespace-nowrap">{{ $CommentAnswers->user->full_name }}</td>
-                            <td class="px-6 py-3 font-medium text-gray-900 whitespace-nowrap">{{ $CommentAnswers->tool->name }}</td>
-                            <td class="px-6 py-3 font-medium text-gray-900 whitespace-nowrap">{{ $CommentAnswers->question->comment_title }}</td>
-                            <td class="px-6 py-3 font-medium text-gray-900 whitespace-nowrap">{{ $CommentAnswers->comment }}</td>
-                            <td class="px-6 py-3 font-medium text-gray-900 whitespace-nowrap">abccc</td>
-                            <td class="px-6 py-3 font-medium text-gray-900 whitespace-nowrap">{{ $CommentAnswers->like_count }}</td>
-                            <td class="px-6 py-3 font-medium text-gray-900 whitespace-nowrap">{{ $CommentAnswers->dislike_count }}</td>
+                            <td class="px-6 py-3 font-medium text-gray-900 whitespace-nowrap">{{ $communityQuestion->user->full_name }}</td>
+                            <td class="px-6 py-3 font-medium text-gray-900 whitespace-nowrap">{{ $communityQuestion->aiToolCategory->name }}</td>
+                            <td class="px-6 py-3 font-medium text-gray-900 whitespace-nowrap">{{ $communityQuestion->question_title }}</td>
+                            <td class="px-6 py-3 font-medium text-gray-900 whitespace-nowrap">{{ $communityQuestion->question_brief }}</td>
                             <td class="px-6 py-3 font-medium text-gray-900 whitespace-nowrap">
                                 <div class="flex gap-4">
-                                    <form action="{{ route('question-answer.updateStatusAnswer', $CommentAnswers->id) }}" method="POST">
+                                    <form action="{{ route('community.updateStatus', $communityQuestion->id) }}" method="POST">
                                         @csrf
                                         @method('PUT')
-                                        <button type="submit" name="approved" value="{{ $CommentAnswers->approved == 1 ? 0 : 1 }}" 
+                                        <button type="submit" name="approved" value="{{ $communityQuestion->approved == 1 ? 0 : 1 }}" 
                                             class="px-3 py-1 rounded text-white 
-                                            {{ $CommentAnswers->approved == 1 ? 'bg-red-600 hover:bg-red-700' : 'bg-green-600 hover:bg-green-700' }}">
-                                            {{ $CommentAnswers->approved == 1 ? 'Disapprove' : 'Approve' }}
+                                            {{ $communityQuestion->approved == 1 ? 'bg-red-600 hover:bg-red-700' : 'bg-green-600 hover:bg-green-700' }}">
+                                            {{ $communityQuestion->approved == 1 ? 'Disapprove' : 'Approve' }}
                                         </button>
                                     </form>
+                                    <a href="{{ route('community.view', $communityQuestion->id) }}">
+                                        <span class="material-symbols-rounded text-2xl text-primary">visibility</span>
+                                    </a> 
                                 </div>
                             </td>                
                         </tr>
@@ -114,7 +110,7 @@
                         </select>                    
                 </div>
 
-                {!! $CommentAnswer->appends(request()->query())->links() !!}
+                {!! $communityQuestions->appends(request()->query())->links() !!}
             </div>
         </div>
 

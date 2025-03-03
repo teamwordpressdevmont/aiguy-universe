@@ -245,6 +245,7 @@ input[type="checkbox"]:checked {
     height: 380px;
 }
 
+
 @media(min-width:1024px)
 {
     .simplebar-content

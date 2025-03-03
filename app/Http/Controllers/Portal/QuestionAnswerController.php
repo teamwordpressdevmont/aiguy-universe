@@ -45,7 +45,7 @@ class QuestionAnswerController extends Controller
         $CommentQuestions = CommentQuestions::findOrFail($id);
         $CommentQuestions->approved = $request->input('approved') == 1 ? 1 : 0; // 1 -> Approved, 0 -> Disapproved
         $CommentQuestions->save();
-        return back()->with('success', 'Review status updated successfully.');
+        return back()->with('success', 'Question status updated successfully.');
     }
 
 
@@ -56,7 +56,7 @@ class QuestionAnswerController extends Controller
          $search = $request->input('search');
          $sortBy = $request->input('sort_by', 'id');
          $sortDirection = $request->input('sort_direction', 'desc');
-         $CommentAnswer = CommentAnswers::with('user' , 'tool' , 'question')
+         $CommentAnswer = CommentAnswers::with('user' , 'tool' , 'question' , 'childAnswers')
          ->when($search, function ($query) use ($search) {
              $query->where('comment', 'like', "%{$search}%");
          })
@@ -81,14 +81,14 @@ class QuestionAnswerController extends Controller
         $CommentAnswer = CommentAnswers::findOrFail($id);
         $CommentAnswer->approved = $request->input('approved') == 1 ? 1 : 0; // 1 -> Approved, 0 -> Disapproved
         $CommentAnswer->save();
-        return back()->with('success', 'Review status updated successfully.');
+        return back()->with('success', 'Answer status updated successfully.');
     }
 
     public function questionsView($id, Request $request)
     {
         $search = $request->input('search');
     
-        $question = CommentQuestions::with('answer' , 'communityReplies')
+        $question = CommentQuestions::with('answer')
             ->where('id', $id)
             ->when($search, function ($query) use ($search) {
                 return $query->where('comment_title', 'like', "%{$search}%");

@@ -14,13 +14,13 @@ use Illuminate\Support\Facades\DB;
 class CommunityController extends Controller
 {
     
-    public function addQuestionAnswersCommunity( Request $request )
+    public function addQuestionCommunity( Request $request )
     {
         DB::beginTransaction();
         try {
 
             // Get only the expected parameters
-            $allowedParams = ['user_id', 'category_id', 'question_title', 'question_brief', 'question_id', 'parent_answer_id', 'answer'];
+            $allowedParams = ['user_id', 'category_id', 'question_title', 'question_brief'];
 
             // Check for unexpected parameters
             $unexpectedParams = array_diff(array_keys($request->all()), $allowedParams);
@@ -35,54 +35,104 @@ class CommunityController extends Controller
             $request->validate([
                 'user_id'           => 'required|exists:users,id',
                 'category_id'       => 'required|exists:ai_tool_category,id',
-                'question_title'    => 'nullable|string',
-                'question_brief'    => 'nullable|string',
-                'question_id'       => 'nullable|exists:community_questions,id',
-                'parent_answer_id'  => 'nullable|exists:community_answers,id',
-                'answer'            => 'nullable|string',
+                'question_title'    => 'required|string|regex:/^[a-zA-Z0-9\s]+$/',
+                'question_brief'    => 'required|string|regex:/^[a-zA-Z0-9\s]+$/',
             ]);
             
             $user_id            = $request->user_id;
             $category_id        = $request->category_id;
-            $question_title     = $request->question_title ?? false;
-            $question_brief     = $request->question_brief ?? false;
+            $question_title     = $request->question_title;
+            $question_brief     = $request->question_brief;
+            
+            $data = [
+                'user_id'           => $user_id,
+                'category_id'           => $category_id,
+                'question_title'     => $question_title,
+                'question_brief'   => $question_brief,
+                'approved'          => 1,
+            ];
+                
+            //store question in database.
+            $question = CommunityQuestions::create( $data );
+            DB::commit();
+            
+            //if everything goes well return with success.
+            return response()->json([
+                'success' => true,
+                'message' => 'Question submitted successfully.',
+            ], 200);
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => $e->validator->errors()->first() // Return validation error message
+            ], 422);
+        } catch (\Exception $e) {
+            
+            DB::rollBack();
+            \Log::error('Failed to submit: ' . $e->getMessage());
+            // Return a JSON response with an error message
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to submit. Please try again later.' .$e->getMessage(),
+            ], 500);
+        }
+    }
+    
+    public function addAnswersCommunity( Request $request )
+    {
+        DB::beginTransaction();
+        try {
+
+            // Get only the expected parameters
+            $allowedParams = ['user_id', 'category_id', 'question_id', 'parent_answer_id', 'answer'];
+
+            // Check for unexpected parameters
+            $unexpectedParams = array_diff(array_keys($request->all()), $allowedParams);
+            if (!empty($unexpectedParams)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Invalid parameters detected: ' . implode(', ', $unexpectedParams)
+                ], 400);
+            }
+            
+            // Validate request
+            $request->validate([
+                'user_id'           => 'required|exists:users,id',
+                'category_id'       => 'required|exists:ai_tool_category,id',
+                'question_id'       => 'nullable|exists:community_questions,id',
+                'parent_answer_id'  => 'nullable|exists:community_answers,id',
+                'answer'            => 'required|string|regex:/^[a-zA-Z0-9\s]+$/',
+            ]);
+            
+            $user_id            = $request->user_id;
+            $category_id        = $request->category_id;
             $question_id        = $request->question_id ?? false;
             $parent_answer_id   = $request->parent_answer_id ?? false;
-            $answer             = $request->answer ?? false;
+            $answer             = $request->answer;
             
             //if question id provided then perform the answer.
-            if ( $question_id != false ) {
+            if ( $question_id != false && $parent_answer_id == false ) {
                 
-                //if answer is empty then return.
-                if ( $answer == false ) {
+                $checkQuestion = CommunityQuestions::where( 'category_id', $category_id )->where( 'id', $question_id )->first();
+                
+                if ( !$checkQuestion ) {
                     return response()->json([
                         'success' => false,
-                        'message' => 'Answer should not be empty.',
+                        'message' => 'Invalid question not exists.',
                     ], 400);
-                }
+                }  
                 
-                //if parent_id is provided then cater as child answer otherwise parent_answer
-                if ( $parent_answer_id != false ) {
-
-                    $data = [
-                        'user_id'               => $user_id,
-                        'category_id'           => $category_id,
-                        'community_question_id' => $question_id,
-                        'parent_answer_id'      => $parent_answer_id,
-                        'answer'                => $answer,
-                        'approved'              => 1,
-                    ];
-                } else {
-                    
-                    $data = [
-                        'user_id'               => $user_id,
-                        'category_id'           => $category_id,
-                        'community_question_id' => $question_id,
-                        'parent_answer_id'      => 0,
-                        'answer'                => $answer,
-                        'approved'              => 1,
-                    ];
-                }
+                $data = [
+                    'user_id'               => $user_id,
+                    'category_id'           => $category_id,
+                    'community_question_id' => $question_id,
+                    'parent_answer_id'      => 0,
+                    'answer'                => $answer,
+                    'approved'              => 1,
+                ];
                 
                 //store answer in database
                 $answer = CommunityAnswers::create( $data );
@@ -96,43 +146,36 @@ class CommunityController extends Controller
 
             }
             
-            //if question_id is not provided then cater as question.
-            if ( $question_id == false ) {
+            //if parent_id is provided then cater as child answer otherwise parent_answer
+            if ( $parent_answer_id != false ) {
                 
-                //if question is empty then return.
-                if ( $question_title == false ) {
-                    
+                $checkQuestion = CommunityAnswers::where( 'category_id', $category_id )->where( 'community_question_id', $question_id )->where( 'id', $parent_answer_id )->first();
+                
+                if ( !$checkQuestion ) {
                     return response()->json([
                         'success' => false,
-                        'message' => 'Question title should not be empty.',
+                        'message' => 'Invalid answer not exists.',
                     ], 400);
                 }
                 
-                //question brief is empty then return.
-                if ( $question_brief == false ) {
-                    
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'Question brief should not be empty.',
-                    ], 400);
-                }
-
                 $data = [
-                    'user_id'           => $user_id,
+                    'user_id'               => $user_id,
                     'category_id'           => $category_id,
-                    'question_title'     => $question_title,
-                    'question_brief'   => $question_brief,
-                    'approved'          => 1,
+                    'community_question_id' => $question_id,
+                    'parent_answer_id'      => $parent_answer_id,
+                    'answer'                => $answer,
+                    'approved'              => 1,
                 ];
                 
-                //store question in database.
-                $question = CommunityQuestions::create( $data );
+                
+                //store answer in database
+                $answer = CommunityAnswers::create( $data );
                 DB::commit();
                 
-                //if everything goes well return with success.
+                //if everything goes well then return success.
                 return response()->json([
                     'success' => true,
-                    'message' => 'Question submitted successfully.',
+                    'message' => 'Answer submitted successfully.',
                 ], 200);
             }
 
@@ -388,7 +431,7 @@ class CommunityController extends Controller
             
             // Validate request
             $request->validate([
-                'user_id'           => 'required|exists:users,id',
+                'user_id'           => 'nullable|exists:users,id',
                 'limit'             => 'nullable|integer',
                 'page_no'           => 'nullable|integer',
                 'order_by'          => 'nullable|in:asc,desc',

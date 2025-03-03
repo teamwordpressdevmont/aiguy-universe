@@ -25,11 +25,11 @@
 
 
         <div class="flex justify-between items-center mb-6">
-            <h1 class="text-3xl font-bold tracking-tight text-gray-900">{{ $question->comment_title }}</h1>
+            <h1 class="text-3xl font-bold tracking-tight text-gray-900">{{ $communityView->question_title }}</h1>
         </div>
         <div class="relative overflow-x-auto">
             <div class="grid lg:grid-cols-3 gap-6">
-            <form id="searchForm" method="GET" action="{{ route('question-answer.question-view', ['id' => $question->id]) }}" class="relative w-full max-w-96 mb-5 flex">
+            <form id="searchForm" method="GET" action="{{ route('community.view', ['id' => $communityView->id]) }}" class="relative w-full max-w-96 mb-5 flex">
                 <input type="text" name="search" value="{{ request('search') }}" id="table-search" class="form-input rounded-e-none" placeholder="Search for items">
                 <button  type="submit" class="flex items-center justify-center border border-default-200 bg-default-100 px-3 font-semibold rounded-r-md border-s-0">Search</button>
                 <div class="searchCloseIcon input-group-append absolute">
@@ -46,7 +46,7 @@
                             <th scope="col" class="px-6 py-3 text-start text-sm text-default-500">S.No</th>
                             <th scope="col" class="px-6 py-3 text-start text-sm text-default-500">ID</th>
                             <th scope="col" class="px-6 py-3 text-start text-sm text-default-500">User Name</th>
-                            <th scope="col" class="px-6 py-3 text-start text-sm text-default-500">Tool Name</th>
+                            <th scope="col" class="px-6 py-3 text-start text-sm text-default-500">Tool Category</th>
                             <th scope="col" class="px-6 py-3 text-start text-sm text-default-500">Question Answer</th>
                             <th scope="col" class="px-6 py-3 text-start text-sm text-default-500">Like</th>
                             <th scope="col" class="px-6 py-3 text-start text-sm text-default-500">Dislike</th>
@@ -54,7 +54,7 @@
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-200">
-                        @if(!$question)
+                        @if($communityView->answer->isEmpty())  
                             <tr class="bg-white border-b border-gray-200">
                                 <td class="px-2 py-2 font-medium text-gray-900 whitespace-nowrap text-center" colspan="6">
                                     No data available.
@@ -63,24 +63,24 @@
                         @else
                             @php $sno = 1; @endphp
 
-                            @foreach($question->answer as $answer)
+                            @foreach($communityView->answer as $answer)
                                 <tr class="bg-white border-b border-gray-200">
                                     <td class="px-6 py-3 font-medium text-gray-900 whitespace-nowrap text-start">{{ $sno }}</td>
                                     <td class="px-6 py-3 font-medium text-gray-900 whitespace-nowrap text-start">{{ $answer->id }}</td>
-                                    <td class="px-6 py-3 font-medium text-gray-900 whitespace-nowrap">{{ $question->user->full_name }}</td>
-                                    <td class="px-6 py-3 font-medium text-gray-900 whitespace-nowrap">{{ $question->tool->name }}</td>
-                                    <td class="px-6 py-3 font-medium text-gray-900 whitespace-nowrap">{{ $answer->comment }}</td>
+                                    <td class="px-6 py-3 font-medium text-gray-900 whitespace-nowrap">{{ $communityView->user->full_name }}</td>
+                                    <td class="px-6 py-3 font-medium text-gray-900 whitespace-nowrap">{{ $communityView->aiToolCategory->name}}</td>
+                                    <td class="px-6 py-3 font-medium text-gray-900 whitespace-nowrap">{{ $answer->answer }}</td>
                                     <td class="px-6 py-3 font-medium text-gray-900 whitespace-nowrap">{{ $answer->like_count }}</td>
                                     <td class="px-6 py-3 font-medium text-gray-900 whitespace-nowrap">{{ $answer->dislike_count }}</td>
                                     <td class="px-6 py-3 font-medium text-gray-900 whitespace-nowrap">
                                         <div class="flex gap-4">
-                                            <form action="{{ route('question-answer.updateStatus', $question->id) }}" method="POST">
+                                            <form action="{{ route('community.updateStatus', $communityView->id) }}" method="POST">
                                                 @csrf
                                                 @method('PUT')
-                                                <button type="submit" name="approved" value="{{ $question->approved == 1 ? 0 : 1 }}" 
+                                                <button type="submit" name="approved" value="{{ $communityView->approved == 1 ? 0 : 1 }}" 
                                                     class="px-3 py-1 rounded text-white 
-                                                    {{ $question->approved == 1 ? 'bg-red-600 hover:bg-red-700' : 'bg-green-600 hover:bg-green-700' }}">
-                                                    {{ $question->approved == 1 ? 'Disapprove' : 'Approve' }}
+                                                    {{ $communityView->approved == 1 ? 'bg-red-600 hover:bg-red-700' : 'bg-green-600 hover:bg-green-700' }}">
+                                                    {{ $communityView->approved == 1 ? 'Disapprove' : 'Approve' }}
                                                 </button>
                                             </form>
                                         </div>

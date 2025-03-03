@@ -42,8 +42,4 @@ class CommentQuestions extends Model
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
 
-    public function communityReplies()
-    {
-        return $this->hasMany(CommunityAnswers::class, 'community_question_id', 'id')->where('approved', 1);
-    }
 }

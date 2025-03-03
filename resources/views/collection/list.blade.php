@@ -27,6 +27,7 @@
         <div class="flex justify-between items-center mb-6">
             <h1 class="text-3xl font-bold tracking-tight text-gray-900">Collection List</h1>
         </div>
+        
         <div class="relative overflow-x-auto">
             <div class="grid lg:grid-cols-3 gap-6">
             <form id="searchForm" method="GET" action="{{ route('collection.list') }}" class="relative w-full max-w-96 mb-5 flex">
@@ -75,9 +76,7 @@
                             <td class="px-6 py-3 font-medium text-gray-900 whitespace-nowrap">{{ $collections->user->full_name }}</td>
                             <th scope="row" class="px-6 py-3 font-medium text-gray-900 whitespace-nowrap text-start">
                                 @if($collections->ai_tools->isNotEmpty())
-                                        @foreach($collections->ai_tools as $aiTool)
-                                            {{ $aiTool->id }}
-                                        @endforeach
+                                    {{ $collections->ai_tools->count() }}
                                 @else
                                     <p>No AI Tools found for this folder.</p>
                                 @endif
@@ -87,7 +86,9 @@
                                     <a href="{{ route('collection.view', $collections->id) }}">
                                         <span class="material-symbols-rounded text-2xl text-primary">visibility</span>
                                     </a>
-                                    <a href="{{ $collections->shareable_link }}" target="_blank"><span class="material-symbols-rounded text-xl">share</span></a> 
+                                    @if ($collections->access_type !== 'private')
+                                    <a  href="{{ $collections->shareable_link }}" target="_blank"><span class="material-symbols-rounded text-xl">share</span></a> 
+                                    @endif
                                 </div>
                             </td>                
                         </tr>

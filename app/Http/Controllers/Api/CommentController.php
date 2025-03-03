@@ -15,14 +15,14 @@ use Illuminate\Support\Facades\DB;
 class CommentController extends Controller
 {
 
-    public function addQuestionAnswers( Request $request )
+    public function addQuestion( Request $request )
     {
 
         DB::beginTransaction();
         try {
 
             // Get only the expected parameters
-            $allowedParams = ['user_id', 'tool_id', 'comment_id', 'question_title', 'question_content', 'answer'];
+            $allowedParams = ['user_id', 'tool_id', 'question_title', 'question_content'];
 
             // Check for unexpected parameters
             $unexpectedParams = array_diff(array_keys($request->all()), $allowedParams);
@@ -37,82 +37,114 @@ class CommentController extends Controller
             $request->validate([
                 'user_id'           => 'required|exists:users,id',
                 'tool_id'           => 'required|exists:ai_tools,id',
-                'comment_id'        => 'nullable|exists:comment_questions,id',
-                'question_title'    => 'nullable|string',
-                'question_content'  => 'nullable|string',
-                'answer'            => 'nullable|string',
+                'question_title'    => 'required|string|regex:/^[a-zA-Z\s]+$/',
+                'question_content'  => 'nullable|string|regex:/^[a-zA-Z\s]+$/',
             ]);
 
             $user_id            = $request->user_id;
             $tool_id            = $request->tool_id;
-            $comment_id         = $request->comment_id ?? false;
-            $question_title     = $request->question_title ?? false;
+            $question_title     = $request->question_title;
             $question_content   = $request->question_content ?? '';
+            
+            $data = [
+                'user_id'           => $user_id,
+                'tool_id'           => $tool_id,
+                'comment_title'     => $question_title,
+                'comment_content'   => $question_content,
+                'approved'          => 1,
+            ];
+
+            $question = CommentQuestions::create( $data );
+
+            DB::commit();
+            
+            //return success.
+            return response()->json([
+                'success' => true,
+                'message' => 'Question submitted successfully.',
+            ], 200);
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => $e->validator->errors()->first() // Return validation error message
+            ], 422);
+
+        } catch (\Exception $e) {
+
+            DB::rollBack();
+            \Log::error('Failed to submit comment: ' . $e->getMessage());
+            // Return a JSON response with an error message
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to submit comment. Please try again later.',
+            ], 500);
+        }
+    }
+    
+    public function addAnswers( Request $request )
+    {
+
+        DB::beginTransaction();
+        try {
+
+            // Get only the expected parameters
+            $allowedParams = ['user_id', 'tool_id', 'comment_id', 'answer'];
+
+            // Check for unexpected parameters
+            $unexpectedParams = array_diff(array_keys($request->all()), $allowedParams);
+            if (!empty($unexpectedParams)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Invalid parameters detected: ' . implode(', ', $unexpectedParams)
+                ], 400);
+            }
+            
+            // Validate request
+            $request->validate([
+                'user_id'           => 'required|exists:users,id',
+                'tool_id'           => 'required|exists:ai_tools,id',
+                'comment_id'        => 'required|exists:comment_questions,id',
+                'answer'            => 'required|string|regex:/^[a-zA-Z\s]+$/',
+            ]);
+
+            $user_id            = $request->user_id;
+            $tool_id            = $request->tool_id;
+            $comment_id         = $request->comment_id;
             $answer             = $request->answer ?? false;
-
-            //if comment id provided then perform the answer.
-            if ( $comment_id != false ) {
-
-                //if answer is empty then return.
-                if ( $answer == false ) {
-
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'Answer should not be empty.',
-                    ], 400);
-                }
-
-                $data = [
-                    'user_id'    => $user_id,
-                    'tool_id'    => $tool_id,
-                    'comment_id' => $comment_id,
-                    'comment'    => $answer,
-                    'approved'   => 1,
-                ];
-
-                //insert the answer into database.
-                $answer = CommentAnswers::create( $data );
-                
-                DB::commit();
-
-                //return success.
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Answer submitted successfully.',
-                ], 200);
-
-            }
-
-            //if comment_id is not provided then cater as question.
-            if ( $comment_id == false ) {
-
-                // if question title is empoty then return.
-                if ( $question_title == false ) {
-
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'Question title should not be empty.',
-                    ], 400);
-                }
-
-                $data = [
-                    'user_id'           => $user_id,
-                    'tool_id'           => $tool_id,
-                    'comment_title'     => $question_title,
-                    'comment_content'   => $question_content,
-                    'approved'          => 1,
-                ];
-
-                $question = CommentQuestions::create( $data );
-
-                DB::commit();
+            
+            $question = CommentQuestions::where( 'tool_id', $tool_id )->where( 'comment_id', $comment_id )->first();
+            
+            //if question not found return error.
+            if ( !$question ) {
                 
                 //return success.
                 return response()->json([
-                    'success' => true,
-                    'message' => 'Question submitted successfully.',
-                ], 200);
+                    'success' => false,
+                    'message' => 'Invalid comment id not exist or deleted.',
+                ], 400);
             }
+
+            $data = [
+                'user_id'    => $user_id,
+                'tool_id'    => $tool_id,
+                'comment_id' => $comment_id,
+                'comment'    => $answer,
+                'approved'   => 1,
+            ];
+
+            //insert the answer into database.
+            $answer = CommentAnswers::create( $data );
+            
+            DB::commit();
+
+            //return success.
+            return response()->json([
+                'success' => true,
+                'message' => 'Answer submitted successfully.',
+            ], 200);
 
         } catch (\Illuminate\Validation\ValidationException $e) {
 
@@ -374,7 +406,7 @@ class CommentController extends Controller
             
             // Validate request
             $request->validate([
-                'user_id'           => 'required|exists:users,id',
+                'user_id'           => 'nulable|exists:users,id',
                 'tool_id'           => 'required|exists:ai_tools,id',
                 'limit'             => 'nullable|integer',
                 'page_no'           => 'nullable|integer',

@@ -19,6 +19,7 @@ use App\Http\Controllers\Portal\UserDataController;
 use App\Http\Controllers\Portal\CollectionController;
 use App\Http\Controllers\Portal\ReviewController;
 use App\Http\Controllers\Portal\QuestionAnswerController;
+use App\Http\Controllers\Portal\CommunityController;
 
 
 //
@@ -26,7 +27,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-//
+
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
@@ -176,6 +177,17 @@ Route::middleware('role:admin')->group(function(){
         Route::get('/answers', [QuestionAnswerController::class, 'answerList'])->name('question-answer.answer-list');
         Route::put('/update-status-answer/{id}', [QuestionAnswerController::class, 'updateStatusAnswer'])->name('question-answer.updateStatusAnswer');
     });
+
+    // Community
+    Route::group(['prefix'  => 'community'],function () {
+        Route::get('/questions', [CommunityController::class, 'questions'])->name('community.questions');
+        Route::get('/answers', [CommunityController::class, 'answers'])->name('community.answer');
+        Route::get('/view/{id}', [CommunityController::class, 'view'])->name('community.view');
+        Route::put('/update-status/{id}', [CommunityController::class, 'updateStatus'])->name('community.updateStatus');
+        Route::put('/update-status-answer/{id}', [CommunityController::class, 'updateStatusAnswer'])->name('community.updateStatusAnswer');
+
+    });
+    
     
     
     Route::get('/contact', [ContactDataController::class, 'list'])->name('contact');
