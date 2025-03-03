@@ -88,7 +88,7 @@ class QuestionAnswerController extends Controller
     {
         $search = $request->input('search');
     
-        $question = CommentQuestions::with('answer')
+        $question = CommentQuestions::with('answer' , 'communityReplies')
             ->where('id', $id)
             ->when($search, function ($query) use ($search) {
                 return $query->where('comment_title', 'like', "%{$search}%");

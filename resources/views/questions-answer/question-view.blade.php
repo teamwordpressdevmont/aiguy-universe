@@ -70,7 +70,7 @@
                                     <td class="px-6 py-3 font-medium text-gray-900 whitespace-nowrap text-start">{{ $question->id }}</td>
                                     <td class="px-6 py-3 font-medium text-gray-900 whitespace-nowrap">{{ $question->user->full_name }}</td>
                                     <td class="px-6 py-3 font-medium text-gray-900 whitespace-nowrap">{{ $question->tool->name }}</td>
-                                    <td class="px-6 py-3 font-medium text-gray-900 whitespace-nowrap">{{ $answer->community_answer ?? 'No reply' }}</td>
+                                    <td class="px-6 py-3 font-medium text-gray-900 whitespace-nowrap">{{ $question->communityReplies->answer }}</td>
                                     <td class="px-6 py-3 font-medium text-gray-900 whitespace-nowrap">{{ $answer->comment }}</td>
                                     <td class="px-6 py-3 font-medium text-gray-900 whitespace-nowrap">{{ $answer->like_count }}</td>
                                     <td class="px-6 py-3 font-medium text-gray-900 whitespace-nowrap">{{ $answer->dislike_count }}</td>
